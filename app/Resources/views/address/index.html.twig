@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <a href="{{ path('address_new') }}" class="btn btn-primary my-5 float-right">Create a new address</a>
+
+    <table id="example" class="table dt-responsive nowrap">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Phone</th>
+                <th>Birthday</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for address in addresses %}
+            <tr>
+                <td><a href="{{ path('address_show', { 'id': address.id }) }}">{{ address.id }}</a></td>
+                <td>{{ address.firstName }}</td>
+                <td>{{ address.lastName }}</td>
+                <td>{{ address.phone }}</td>
+                <td>{{ address.birthday|date('M d Y') }}</td>
+                <td>{{ address.email }}</td>
+                <td>
+                    <a href="{{ path('address_show', { 'id': address.id }) }}" class="btn btn-xs btn-success">show</a>
+                    <a href="{{ path('address_edit', { 'id': address.id }) }}" class="btn btn-xs btn-primary">edit</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

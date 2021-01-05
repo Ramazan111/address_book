@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Address creation</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+
+        <a class="btn btn-sm btn-secondary" href="{{ path('address_index') }}">Back to the list</a>
+        <input class="btn btn-sm btn-success" type="submit" value="Create" />
+    {{ form_end(form) }}
+{% endblock %}
