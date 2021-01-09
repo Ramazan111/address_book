@@ -13,17 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-/**
- * Address controller.
- *
- * @Route("address")
- */
 class AddressController extends Controller
 {
     /**
      * Lists all address entities.
      *
-     * @Route("/", name="address_index")
+     * @Route("/", name="homepage")
      * @Method("GET")
      */
     public function indexAction()
@@ -130,12 +125,14 @@ class AddressController extends Controller
 
                 }
 
-                $address->setPicture($newFilename);
+                if ($newFilename != null) {
+                    $address->setPicture($newFilename);
+                }
             }
 
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('address_index', array(
+            return $this->redirectToRoute('homepage', array(
                 'addresses' => $addresses,
             ));
         }
@@ -159,9 +156,12 @@ class AddressController extends Controller
         $address = $em->getRepository('AppBundle:Address')->find($id);
 
         $filename = $address->getPicture();
-        $filesystem = new Filesystem();
-        $filesystem->remove($this->get('kernel')->getRootDir().'/../web/uploads/'.$filename);
-        $address->setPicture(null);
+
+        if ($filename != null) {
+            $filesystem = new Filesystem();
+            $filesystem->remove($this->get('kernel')->getRootDir().'/../web/uploads/'.$filename);
+            $address->setPicture(null);
+        }
 
         if ($request->get('type') != 'image') {
             $em->remove($address);
