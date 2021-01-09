@@ -6,7 +6,10 @@ use AppBundle\Entity\Address;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -107,10 +110,34 @@ class AddressController extends Controller
         $editForm = $this->createForm('AppBundle\Form\AddressType', $address);
         $editForm->handleRequest($request);
 
+        $em = $this->getDoctrine()->getManager();
+        $addresses = $em->getRepository('AppBundle:Address')->findAll();
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            /** @var UploadedFile $picture */
+            $picture = $editForm->get('picture')->getData();
+
+            if ($picture) {
+                $originalFilename = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$picture->guessExtension();
+
+                try {
+                    $picture->move(
+                        $this->getParameter('pictures_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+
+                }
+
+                $address->setPicture($newFilename);
+            }
+
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('address_edit', array('id' => $address->getId()));
+            return $this->redirectToRoute('address_index', array(
+                'addresses' => $addresses,
+            ));
         }
 
         return $this->render('address/edit.html.twig', array(
@@ -123,21 +150,26 @@ class AddressController extends Controller
     /**
      * Deletes a address entity.
      *
-     * @Route("/{id}", name="address_delete")
-     * @Method("DELETE")
+     * @Route("/delete/{id}", name="address_delete")
+     * @Method("POST")
      */
-    public function deleteAction(Request $request, Address $address)
+    public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($address);
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $address = $em->getRepository('AppBundle:Address')->find($id);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+        $filename = $address->getPicture();
+        $filesystem = new Filesystem();
+        $filesystem->remove($this->get('kernel')->getRootDir().'/../web/uploads/'.$filename);
+        $address->setPicture(null);
+
+        if ($request->get('type') != 'image') {
             $em->remove($address);
-            $em->flush();
         }
 
-        return $this->redirectToRoute('address_index');
+        $em->flush();
+
+        return new JsonResponse(['response'=>'success']);
     }
 
     /**

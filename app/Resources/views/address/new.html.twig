@@ -1,12 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Address creation</h1>
+    <div class="card mt-5">
+        <div class="card-header">
+            Create new address
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-
-        <a class="btn btn-sm btn-secondary" href="{{ path('address_index') }}">Back to the list</a>
-        <input class="btn btn-sm btn-success" type="submit" value="Create" />
-    {{ form_end(form) }}
+                <a class="btn btn-sm btn-secondary" href="{{ path('address_index') }}">Back to the list</a>
+                <input class="btn btn-sm btn-success" type="submit" value="Create" />
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

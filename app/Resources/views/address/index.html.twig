@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <a href="{{ path('address_new') }}" class="btn btn-primary my-5 float-right">Create a new address</a>
+    <a href="{{ path('address_new') }}" class="btn btn-sm btn-primary my-5 float-right">New address</a>
 
     <table id="example" class="table dt-responsive nowrap">
         <thead>
@@ -19,15 +19,15 @@
         <tbody>
         {% for address in addresses %}
             <tr>
-                <td><a href="{{ path('address_show', { 'id': address.id }) }}">{{ address.id }}</a></td>
+                <td>{{ address.id }}</td>
                 <td>{{ address.firstName }}</td>
                 <td>{{ address.lastName }}</td>
                 <td>{{ address.phone }}</td>
                 <td>{{ address.birthday|date('M d Y') }}</td>
                 <td>{{ address.email }}</td>
                 <td>
-                    <a href="{{ path('address_show', { 'id': address.id }) }}" class="btn btn-xs btn-success">show</a>
-                    <a href="{{ path('address_edit', { 'id': address.id }) }}" class="btn btn-xs btn-primary">edit</a>
+                    <a href="{{ path('address_show', { 'id': address.id }) }}" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>
+                    <a href="{{ path('address_edit', { 'id': address.id }) }}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
                 </td>
             </tr>
         {% endfor %}

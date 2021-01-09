@@ -17,9 +17,3 @@ require('popper.js');
 $(document).ready(function() {
     $('[data-toggle="popover"]').popover();
 });
-
-// $(document).ready( function () {
-//     $('#example').dataTable();
-// } );
-
-console.log('test');
